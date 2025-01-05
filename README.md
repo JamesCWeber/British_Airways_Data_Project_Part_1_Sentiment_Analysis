@@ -51,4 +51,30 @@ import matplotlib.pyplot as plt
 ```
 
 ### 2. Web Scraping Test
-**When a web page is scraped, it comes in the form of all HTML codes that make up the web page. To extract data, we must first find the set of HTML codes that contains the data we want.** We will first 
+**When a web page is scraped, it comes in the form of all HTML codes that make up the web page. To extract data, we must first find the set of HTML codes that contains the data we want.** We will scrape the first page of Skytrax reviews to find the set of HTML code that contains the review data.
+
+```
+# Use the requests.get() command to fetch (download) the webpage.
+# Use the .text command to convert the HTML code into text form.
+# Use the BeautifulSoup() command to parse the HTML code.
+
+website = 'https://www.airlinequality.com/airline-reviews/british-airways'
+result = requests.get(website)
+content = result.text
+soup = BeautifulSoup(content)
+```
+
+Analyzing the HTML code will show that **all reviews are under the "article" tag and "review" itemprop. Since we are only interested in the contents the reviews, we will extract portions of the HTML code that contains the "article" tag and "review" itemprop.**
+```
+# The box contains the HTML code for each review.
+# Use the find_all command to find and extract portions of the HTML code with a specified tag.
+
+box = soup.find_all('article', itemprop = "review")
+```
+The picture below will show a portion of the HTML code that contains the first review on the webpage.
+
+![Sample of HTML Code for Review](HTML_Review.png)
+
+The portion highlighted in blue represents the tag and itemprop that the previous line of code searches for and extracts. The portion highlighted in red represents the end of the article tag. The HTML code between the blue and red portions are different attributes used to create a review.
+
+Analyzing the HTML code, we can see the tags that make up the various aspects of a review. For example, the title of the review is under the h2 tag (highlighted in green).
