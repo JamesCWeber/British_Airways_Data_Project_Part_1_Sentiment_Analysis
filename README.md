@@ -78,3 +78,230 @@ The picture below will show a portion of the HTML code that contains the first r
 The portion highlighted in blue represents the tag and itemprop that the previous line of code searches for and extracts. The portion highlighted in red represents the end of the article tag. The HTML code between the blue and red portions are different attributes used to create a review.
 
 Analyzing the HTML code, we can see the tags that make up the various aspects of a review. For example, the title of the review is under the h2 tag (highlighted in green).
+
+### 3. Web Scraping
+In the previous section, **we have extracted the HTML code that make up the reviews shown on page 1 of Skytrax's British Airway reviews.** Now that we know which tags and itemprops to extract, **we must now create a loop so that we can repeat the process for all pages.** We will use a modified url that that will display 350 reviews per page. At the time of this project, there are 12 pages of reviews, with a total of 3906 reviews.
+
+The code below will scrape all 12 pages of reviews and extract various portions of the HTML code that makes the reviews. Each portion of HTML code will be placed in a list. For example, the portion of the HTML tha make up the review's title will be placed in the title_list.
+```
+# Use for loops to scrape all data for all reviews.
+
+website1 = 'https://www.airlinequality.com/airline-reviews/british-airways/page/'
+website2 = '/?sortby=post_date%3ADesc&pagesize=350'
+true_false = []
+rating_list = []
+title_list = []
+author_list = []
+post_date_list = []
+text_list = []
+aircraft_list = []
+traveller_list = []
+seat_list = []
+route_list = []
+fly_date_list = []
+recommended_list = []
+seat_comfort = []
+staff_service = []
+food_drinks = []
+entertainment = []
+ground_service = []
+wifi = []
+value = []
+
+for page in range(1, 13):
+    result = requests.get(website1 + str(page) + website2)
+    content = result.text
+    soup = BeautifulSoup(content)
+    box = soup.find_all('article', itemprop = "review")
+
+    for review in box:
+        rating_list.append(review.find_all('span')[0].text)
+
+        title_list.append(review.find('h2', class_ = "text_header").get_text())
+
+        author_list.append(review.find('span', itemprop = "name").get_text())
+
+        post_date_list.append(review.find('time').get_text())
+        
+        text_list.append(review.find('div', class_ = "text_content").get_text())
+
+    for review in box:
+        sub_box = review
+        for i in sub_box.find_all('tr'):
+            if "Aircraft" in i.get_text():
+                aircraft = i.get_text().strip().replace('Aircraft', '')
+                true_false.append(1)
+            else:
+                true_false.append(0)
+    
+        aircraft_list.append(aircraft if sum(true_false) == 1 else None)
+            
+        true_false.clear()
+
+        for i in sub_box.find_all('tr'):
+            if "Type Of Traveller" in i.get_text():
+                traveller = i.get_text().strip().replace('Type Of Traveller', '')
+                true_false.append(1)
+            else:
+                true_false.append(0)
+    
+        traveller_list.append(traveller if sum(true_false) == 1 else None)
+            
+        true_false.clear()
+
+        for i in sub_box.find_all('tr'):
+            if "Seat Type" in i.get_text():
+                seat = i.get_text().strip().replace('Seat Type', '')
+                true_false.append(1)
+            else:
+                true_false.append(0)
+    
+        seat_list.append(seat if sum(true_false) == 1 else None)
+            
+        true_false.clear()
+
+        for i in sub_box.find_all('tr'):
+            if "Route" in i.get_text():
+                route = i.get_text().strip().replace('Route', '')
+                true_false.append(1)
+            else:
+                true_false.append(0)
+    
+        route_list.append(route if sum(true_false) == 1 else None)
+            
+        true_false.clear()
+
+        for i in sub_box.find_all('tr'):
+            if "Date Flown" in i.get_text():
+                fly_date = i.get_text().strip().replace('Date Flown', '')
+                true_false.append(1)
+            else:
+                true_false.append(0)
+    
+        fly_date_list.append(fly_date if sum(true_false) == 1 else None)
+            
+        true_false.clear()
+
+        for i in sub_box.find_all('tr'):
+            if "Recommended" in i.get_text():
+                recommend = i.get_text().strip().replace('Recommended', '')
+                true_false.append(1)
+            else:
+                true_false.append(0)
+    
+        recommended_list.append(recommend if sum(true_false) == 1 else None)
+            
+        true_false.clear()
+
+    for review in box:
+        sub_box = review
+        for i in sub_box.find_all('tr'):
+            if "Seat Comfort" in i.get_text():
+                star_rating = len(i.find_all('span', class_ = "star fill"))
+                true_false.append(1)
+            else:
+                true_false.append(0)
+            
+        seat_comfort.append(star_rating if sum(true_false) == 1 else None)
+            
+        true_false.clear()
+
+        for i in sub_box.find_all('tr'):
+            if "Cabin Staff Service" in i.get_text():
+                star_rating = len(i.find_all('span', class_ = "star fill"))
+                true_false.append(1)
+            else:
+                true_false.append(0)
+            
+        staff_service.append(star_rating if sum(true_false) == 1 else None)
+            
+        true_false.clear()
+
+        for i in sub_box.find_all('tr'):
+            if "Food & Beverages" in i.get_text():
+                star_rating = len(i.find_all('span', class_ = "star fill"))
+                true_false.append(1)
+            else:
+                true_false.append(0)
+            
+        food_drinks.append(star_rating if sum(true_false) == 1 else None)
+            
+        true_false.clear()
+
+        for i in sub_box.find_all('tr'):
+            if "Inflight Entertainment" in i.get_text():
+                star_rating = len(i.find_all('span', class_ = "star fill"))
+                true_false.append(1)
+            else:
+                true_false.append(0)
+            
+        entertainment.append(star_rating if sum(true_false) == 1 else None)
+            
+        true_false.clear()
+
+        for i in sub_box.find_all('tr'):
+            if "Ground Service" in i.get_text():
+                star_rating = len(i.find_all('span', class_ = "star fill"))
+                true_false.append(1)
+            else:
+                true_false.append(0)
+
+        ground_service.append(star_rating if sum(true_false) == 1 else None)
+
+        true_false.clear()
+
+        for i in sub_box.find_all('tr'):
+            if "Wifi & Connectivity" in i.get_text():
+                star_rating = len(i.find_all('span', class_ = "star fill"))
+                true_false.append(1)
+            else:
+                true_false.append(0)
+            
+        wifi.append(star_rating if sum(true_false) == 1 else None)
+
+        true_false.clear()
+
+        for i in sub_box.find_all('tr'):
+            if "Value For Money" in i.get_text():
+                star_rating = len(i.find_all('span', class_ = "star fill"))
+                true_false.append(1)
+            else:
+                true_false.append(0)
+
+        value.append(star_rating if sum(true_false) == 1 else None)
+
+        true_false.clear()
+        
+rating_list = [rating if rating.isdigit() else None for rating in rating_list]
+```
+
+Once the web pages are scraped and the lists are made, we will create a dataframe with the lists. The code below will take the lists created in the previous section of code and will create one column for each list.
+```
+# Create dataframe that contains all the data for all reviews.
+
+df = pd.DataFrame()
+df['Rating'] = rating_list
+df['Title'] = title_list
+df['Author'] = author_list
+df['Date_Posted'] = post_date_list
+df['Text'] = text_list
+df['Aircraft'] = aircraft_list
+df['Traveller'] = traveller_list
+df['Seat_Type'] = seat_list
+df['Route'] = route_list
+df['Date_Flown'] = fly_date_list
+df["Seat_Comfort"] = seat_comfort
+df["Cabin_Staff_Service"] = staff_service
+df["Foods_&_Drinks"] = food_drinks
+df["Inflight_Entertainment"] = entertainment
+df["Ground_Service"] = ground_service
+df["Wifi_&_Connectivity"] = wifi
+df["Value_for_Money"] = value
+df['Recommended'] = recommended_list
+```
+The picture below is a sample of the dataframe we have created.
+![Dataframe that Contains Review Data](Review_Dataframe.png)
+
+### 4. Data Cleaning
+**Data cleaning is the process of fixing or removing incorrect, corrupted, incorrectly formatted, duplicate, or incomplete data within a dataset.** Data cleaning ensures that the analysis is accuarate which will improve efficiency and decision making. Data cleaning techniques include removing unnecessary information, removing null values, and making sure that each column contains the right data type.
+
