@@ -82,7 +82,7 @@ Analyzing the HTML code, we can see the tags that make up the various aspects of
 ### 3. Web Scraping
 In the previous section, **we have extracted the HTML code that make up the reviews shown on page 1 of Skytrax's British Airway reviews.** Now that we know which tags and itemprops to extract, **we must now create a loop so that we can repeat the process for all pages.** We will use a modified url that that will display 350 reviews per page. At the time of this project, there are 12 pages of reviews, with a total of 3906 reviews.
 
-The code below will scrape all 12 pages of reviews and extract various portions of the HTML code that makes the reviews. Each portion of HTML code will be placed in a list. For example, the portion of the HTML tha make up the review's title will be placed in the title_list.
+The code below will scrape all 12 pages of reviews and will extract portions of the HTML code such as the review title, overall rating, and review text. Each portion of HTML code will be placed in a list. For example, the portion of the HTML tha make up the review's title will be placed in the title_list.
 ```
 # Use for loops to scrape all data for all reviews.
 
@@ -305,3 +305,52 @@ The picture below is a sample of the dataframe we have created.
 ### 4. Data Cleaning
 **Data cleaning is the process of fixing or removing incorrect, corrupted, incorrectly formatted, duplicate, or incomplete data within a dataset.** Data cleaning ensures that the analysis is accuarate which will improve efficiency and decision making. Data cleaning techniques include removing unnecessary information, removing null values, and making sure that each column contains the right data type.
 
+First, we will look at the data types for every column and ensure that the columns have the appropriate data type.
+```
+# Use the .info() to find out the number of non-null count per column and the data type per column.
+
+df.info()
+```
+![Datatype per Column](Data_Types.png)
+
+The picture above shows a table that contains the column names, the number of non null values in each column, and the data type for each column. The columns contain 1 of  3 data types: int64, float64, and object. That contain int64 data type can only store whole numbers. Columns that contain float64 data type can only store decimal numbers. Columns that contain object data type can only store characters.
+
+The Date_Posted and Date_Flown columns contain object data type. For accurate analysis, the **Date_Posted column should be converted into datetime data type.** The Date_Flown column contains both month and year data. **We will remove the month data from the Date_Flown column and will convert the Date_Flown column into year data type.**
+```
+# Use the pd.to_datetime() command to convert Date_Posted and Date_Flown columns into date time.
+
+df["Date_Flown"] = pd.to_datetime(df["Date_Flown"], format = 'mixed')
+
+# Use the .dt.year command to extract the date from the Date_Flown column.
+# Create a column that contains the year a flight occured.
+
+df["Year_Flown"] = df["Date_Flown"].dt.year
+```
+The Rating column contains object data type. Customer ratings are whole numbers from 1 to 10. **We will convert the Rating column data type into int64.** The Seat_Comfort, Cabin_Staff_Service, Foods_and_Drinks, Inflight_Entertainment, Ground_Service, and Wifi_and_Connectivity columns all contain float64 data types. These columns should contain whole numbers from 1 to 5. **We will convert these columns from float64 data type (decimal numbers) to int 64 (whole numbers).**
+```
+# Use the .astype() command to convert columns with numerical values into int64 data type.
+
+df = df.astype({'Rating':'int64', 
+                'Seat_Comfort':'int64', 
+                'Cabin_Staff_Service':'int64', 
+                'Foods_&_Drinks':'int64', 
+                'Ground_Service':'int64'})
+```
+Many reviews begin with ✅ Trip Verified. **The trip verification notifications are not important for our analysis and will be removed from the text.**
+```
+# Use the .str.replace() command to remove str values like ✅ Trip Verified from the text.
+
+df['Text'] = df['Text'].str.replace("✅ Trip Verified", '')
+df['Text'] = df['Text'].str.replace("✅ Verified Review", '')
+df['Text'] = df['Text'].str.replace("Not Verified", '')
+df['Text'] = df['Text'].str.replace("❎ Unverified", '')
+df['Text'] = df['Text'].str.replace("❎ Not Verified", '')
+
+# Use the .str.replace() command to remove the | delimiter as well.
+
+df['Text'] = df['Text'].str.replace("|", '')
+
+# Use the .str.strip() command to remove any whitespace.
+
+df["Text"] = df["Text"].str.strip()
+```
