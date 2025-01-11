@@ -313,7 +313,7 @@ df.info()
 ```
 ![Datatype per Column](Data_Types.png)
 
-The picture above shows a table that contains the column names, the number of non null values in each column, and the data type for each column. The columns contain 1 of  3 data types: int64, float64, and object. That contain int64 data type can only store whole numbers. Columns that contain float64 data type can only store decimal numbers. Columns that contain object data type can only store characters.
+The picture above shows a table that contains the column names, the number of non null values in each column, and the data type for each column. The columns contain 1 of  3 data types: int64, float64, and object. Columns that contain int64 data type can only store whole numbers. Columns that contain float64 data type can only store decimal numbers. Columns that contain object data type can only store characters.
 
 The Date_Posted and Date_Flown columns contain object data type. For accurate analysis, the **Date_Posted column should be converted into datetime data type.** The Date_Flown column contains both month and year data. **We will remove the month data from the Date_Flown column and will convert the Date_Flown column into year data type.**
 ```
@@ -354,3 +354,5 @@ df['Text'] = df['Text'].str.replace("|", '')
 
 df["Text"] = df["Text"].str.strip()
 ```
+![Datatype per Column](Data_Types.png)
+
