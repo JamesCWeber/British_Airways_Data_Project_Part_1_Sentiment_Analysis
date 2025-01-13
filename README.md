@@ -16,7 +16,7 @@ In this task, I take on the role of a junior data scientist employed at British 
 * PowerPoint
 
 ## Data Sourcing
-This data I will be using in this project is scraped from [British Airways reviews provided by Skytrax](https://www.airlinequality.com/airline-reviews/british-airways). A copy of the scraped data is included in this repository under the file name: British_Airways_Review_Scraping.csv. A copy of the cleaned scraped data is included in this repository under the file name: Clean_Review_Scraping.
+This data I will be using in this project is scraped from [British Airways reviews provided by Skytrax](https://www.airlinequality.com/airline-reviews/british-airways). A copy of the cleaned scraped data is included in this repository under the file name: Clean_Review_Scraping.
 
 ## Data Attributes
 Data analysis is conducted on cleaned scraped data. The attributes listed below are attributes from the cleaned scaped data.
@@ -277,7 +277,7 @@ rating_list = [rating if rating.isdigit() else None for rating in rating_list]
 
 Once the web pages are scraped and the lists are made, we will create a dataframe with the lists. The code below will take the lists created in the previous section of code and will create one column for each list.
 ```
-# Create dataframe that contains all the data for all reviews.
+# Create a dataframe that contains all the data for all reviews.
 
 df = pd.DataFrame()
 df['Rating'] = rating_list
@@ -305,27 +305,62 @@ The picture below is a sample of the dataframe we have created.
 ### 4. Data Cleaning
 **Data cleaning is the process of fixing or removing incorrect, corrupted, incorrectly formatted, duplicate, or incomplete data within a dataset.** Data cleaning ensures that the analysis is accuarate which will improve efficiency and decision making. Data cleaning techniques include removing unnecessary information, removing null values, and making sure that each column contains the right data type.
 
-First, we will look at the data types for every column and ensure that the columns have the appropriate data type.
+#### 4a. Removing Unnecessary Columns and Null Data
+First, we will look at a summary of the dataframe we have created using the data we scraped.
 ```
 # Use the .info() to find out the number of non-null count per column and the data type per column.
 
 df.info()
 ```
-![Datatype per Column](Data_Types.png)
+![Dataframe Summary](Data_Types.png)
 
-The picture above shows a table that contains the column names, the number of non null values in each column, and the data type for each column. The columns contain 1 of  3 data types: int64, float64, and object. Columns that contain int64 data type can only store whole numbers. Columns that contain float64 data type can only store decimal numbers. Columns that contain object data type can only store characters.
+The picture above shows a summary table of our dataframe. The table contains the column names, the number of non null values in each column, and the data type for each column. Some columns such as the Title, Author, Date_Posted, Text, Value_for_Money, and Recommended columns contain 3908 rows with non null values. Other columns contain less than 3908 rows with non null values, indicating that **some rows are missing data.**
 
-The Date_Posted and Date_Flown columns contain object data type. For accurate analysis, the **Date_Posted column should be converted into datetime data type.** The Date_Flown column contains both month and year data. **We will remove the month data from the Date_Flown column and will convert the Date_Flown column into year data type.**
+First, **we will remove columns that contain data that are not useful for our analysis.** Columns that contain data that is not useful for our analysis are the Author column, Date_Posted column, and Route column.
+
+**We will also remove columns where the number of non null values is less than 65% of the total number of reviews.** Columns with a large percentage of missing (null) values will negatively affect analysis. The total number of reviews is 3908 and 65% of the total is 2540. We will remove columns with less than 2540 non null values. These columns are the Aircraft column and the Wifi_&_Connectivity column.
 ```
-# Use the pd.to_datetime() command to convert Date_Posted and Date_Flown columns into date time.
+# Use the .drop() command to drop columns that will not be used for this analysis.
 
-df["Date_Flown"] = pd.to_datetime(df["Date_Flown"], format = 'mixed')
-
-# Use the .dt.year command to extract the date from the Date_Flown column.
-# Create a column that contains the year a flight occured.
-
-df["Year_Flown"] = df["Date_Flown"].dt.year
+df = df.drop(columns = ['Author', 
+                        'Date_Posted', 
+                        'Aircraft', 
+                        'Route', 
+                        'Wifi_&_Connectivity'])
 ```
+Although we have removed columns with less than 65% non null values, we still have columns that contain null values. **One method to deal with null values is to replace null values with mean, median, or mode.** This method will only work with columns that contain numeric values. We will replace null values in the Seat_Comfort, Cabin_Staff_Service, Foods_&_Drinks, Inflight_Entertainment, and Ground_Service Columns with each column's mean values.
+```
+# Use the round() command to round a numeric value to the nearest integer.
+# Use the .fillna() command to replace null values with another value.
+# Use the .mean() command to calculate the average value.
+
+df['Seat_Comfort'] = round(df['Seat_Comfort'].fillna(df['Seat_Comfort'].mean()))
+df['Cabin_Staff_Service'] = round(df['Cabin_Staff_Service'].fillna(df['Cabin_Staff_Service'].mean()))
+df['Foods_&_Drinks'] = round(df['Foods_&_Drinks'].fillna(df['Foods_&_Drinks'].mean()))
+df['Inflight_Entertainment'] = round(df['Inflight_Entertainment'].fillna(df['Inflight_Entertainment'].mean()))
+df['Ground_Service'] = round(df['Ground_Service'].fillna(df['Ground_Service'].mean()))
+```
+The remaining columns that contain null data also contain object data type. These columns are the Rating, Traveller, Seat_Type, Route, and Date_Flown columns. **We will remove the rows that contain null data in these columns.**
+```
+# Use the .dropna() command to drop rows with null values.
+# Use the .reset_index(drop = True) command to reset the index and not include an index column.
+
+df = df.dropna()
+df = df.reset_index(drop = True)
+```
+Now that we have removed some columns and removed null values, the dataframe summary should reflect that.
+```
+# Use the .info() to find out the number of non-null count per column and the data type per column.
+
+df.info()
+```
+![Dataframe Summary with no Null Values](Data_Types.png)
+
+The picture above shows a summary table of our dataframe. The dataframe contains 3126 rows for all columns. **We are left with 80% of the original data. This is a sufficient amount of data to conduct an accurate analysis.**
+
+#### 4b. Converting Column Data Types
+To perform further data cleaning procedures, **we will need to convert columns into the apporpriate data type.** The columns contain 1 of 3 data types: int64, float64, and object. Columns that contain int64 data type can only store whole numbers. Columns that contain float64 data type can only store decimal numbers. Columns that contain object data type can only store characters.
+
 The Rating column contains object data type. Customer ratings are whole numbers from 1 to 10. **We will convert the Rating column data type into int64.** The Seat_Comfort, Cabin_Staff_Service, Foods_and_Drinks, Inflight_Entertainment, Ground_Service, and Wifi_and_Connectivity columns all contain float64 data types. These columns should contain whole numbers from 1 to 5. **We will convert these columns from float64 data type (decimal numbers) to int 64 (whole numbers).**
 ```
 # Use the .astype() command to convert columns with numerical values into int64 data type.
@@ -336,23 +371,93 @@ df = df.astype({'Rating':'int64',
                 'Foods_&_Drinks':'int64', 
                 'Ground_Service':'int64'})
 ```
-Many reviews begin with ✅ Trip Verified. **The trip verification notifications are not important for our analysis and will be removed from the text.**
+The Date_Flown column contains object data type and should be **converted into datetime data type. The Date_Flown column can then be split into a column for the month flown and the year flown.**
 ```
-# Use the .str.replace() command to remove str values like ✅ Trip Verified from the text.
+# Use the pd.to_datetime() command to convert Date_Posted and Date_Flown columns into date time.
+
+df['Date_Flown'] = pd.to_datetime(df['Date_Flown'], format = '%B %Y')
+
+# Use the .dt.month and .dt.year commands to extract month and year data from datetime data.
+
+df['Month_Flown'] = df['Date_Flown'].dt.month
+df['Year_Flown'] = df['Date_Flown'].dt.year
+
+# Use the drop() command to delete a column.
+
+df = df.drop('Date_Flown', axis = 1)
+```
+
+#### 4c. Removing Verification Notification from Review Text
+Many reviews begin with ✅ Trip Verified. **The trip verification notifications are not important for our analysis and will be removed from the text.** Reviews with a trip verification notification separate the verification from the rest of the review with |. The | character acts as a delimiter. We can separate the notification from the text using the delimeter. Once the notification is separated from the text, we will delete the notifications.
+```
+# Use the .str.replace() command to replace the verification notifications and the delimiter with a blank space.
 
 df['Text'] = df['Text'].str.replace("✅ Trip Verified", '')
 df['Text'] = df['Text'].str.replace("✅ Verified Review", '')
 df['Text'] = df['Text'].str.replace("Not Verified", '')
 df['Text'] = df['Text'].str.replace("❎ Unverified", '')
 df['Text'] = df['Text'].str.replace("❎ Not Verified", '')
-
-# Use the .str.replace() command to remove the | delimiter as well.
-
 df['Text'] = df['Text'].str.replace("|", '')
 
 # Use the .str.strip() command to remove any whitespace.
 
 df["Text"] = df["Text"].str.strip()
 ```
-![Datatype per Column](Data_Types.png)
+![Cleaned Dataframe](Cleaned_Dataframe.png)
 
+The picture above shows a summary table of our dataframe after data cleaning. The data under the Text column no longer has any verification notifications.
+
+### 5. Data Analysis
+We will conduct an analysis of the cleaned data. This will include an analysis on how different traveller types rate different aspects of their experience, sentiment analysis, and creating a word cloud.
+
+First, we will analyze how different traveller types rate their overall experience.
+```
+avg_rating_order = df.groupby('Traveller')['Rating'].mean().sort_values(ascending = False).index.values
+
+# Use the .subplots() command to create a figure and subplots (all the plots that fit in a figure).
+
+fig, ax = plt.subplots(1, 1, figsize=(16, 7))
+
+# Use the .barplot() command to create a bar plot.
+# Use the .set() command to create a title and x and y axis labels.
+
+sns.barplot(data = df, 
+            x = 'Rating', 
+            y = 'Traveller', 
+            errorbar = None, 
+            order = avg_rating_order).set(title = 'Average Rating by Traveller Type', 
+                                         xlabel = 'Average Rating', 
+                                         ylabel = 'Traveller Type')
+
+# Use the .bar_label() command to add labels to each bar.
+
+ax.bar_label(ax.containers[0])
+
+plt.show()
+```
+![Traveller Type vs. Average Rating](Cleaned_Dataframe.png)
+
+The highest rating a customer can give their overall experience is 10. **The average rating for all traveller types is low.** The traveller type with the highest average rating are passengers who are travelling solo for leisure. The traveller type with the lowest average rating are passengers who are travelling for business.
+
+One important aspect of air travel is seat comfort. **We will compare the seat comfort rating by seat type.**
+```
+avg_seat_comfort_order = df.groupby('Seat_Type')['Seat_Comfort'].mean().sort_values(ascending = False).index.values
+
+fig, ax = plt.subplots(1, 1, figsize=(16, 7))
+
+
+sns.barplot(data = df, 
+            x = 'Seat_Comfort', 
+            y = 'Seat_Type', 
+            errorbar = None, 
+            order = avg_seat_comfort_order).set(title = 'Average Seat Comfort Rating by Seat Type', 
+                                                xlabel = 'Average Seat Comfort Rating', 
+                                                ylabel= 'Seat Type')
+
+ax.bar_label(ax.containers[0])
+
+plt.show()
+```
+![Seat Type vs. Average Seat Comfort Rating](Average_Seat_Comfort_by_Seat_Type.png)
+
+The First Class seating has the highest average score of 3.6 out of 5. The Economy Class seats have the lowest average score of 2.7. British Airway's travel class, from least premium to most premium are Economy, Premium Economy, Business, and First Class. The Business Class average seat comfort score is slightly above Ecomoy Class and lower than Premium Economy. **The lack of seat comfort for Business Class may be part of the reason why passengers who travel for business give their trips a low rating.**
