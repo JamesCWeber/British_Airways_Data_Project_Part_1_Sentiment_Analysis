@@ -410,6 +410,7 @@ The picture above shows a summary table of our dataframe after data cleaning. Th
 ### 5. Data Analysis
 We will conduct an analysis of the cleaned data. This will include an analysis on how different traveller types rate different aspects of their experience, sentiment analysis, and creating a word cloud.
 
+#### 5a. Ratings and Review Analysis
 First, we will analyze how different traveller types rate their overall experience.
 ```
 avg_rating_order = df.groupby('Traveller')['Rating'].mean().sort_values(ascending = False).index.values
@@ -461,3 +462,220 @@ plt.show()
 ![Seat Type vs. Average Seat Comfort Rating](Average_Seat_Comfort_by_Seat_Type.png)
 
 The First Class seating has the highest average score of 3.6 out of 5. The Economy Class seats have the lowest average score of 2.7. British Airway's travel class, from least premium to most premium are Economy, Premium Economy, Business, and First Class. The Business Class average seat comfort score is slightly above Ecomoy Class and lower than Premium Economy. **The lack of seat comfort for Business Class may be part of the reason why passengers who travel for business give their trips a low rating.**
+
+Along with overall trip rating, customers can rate different aspects of their trip. **We will compare how different travellers rate the cabin service, foods and drinks, inflight entertainment, ground service, and value for the money.**
+```
+avg_cabin_service_order = df.groupby('Traveller')['Cabin_Staff_Service'].mean().sort_values(ascending = False).index.values
+avg_foods_drinks_order = df.groupby('Traveller')['Foods_&_Drinks'].mean().sort_values(ascending = False).index.values
+avg_inflight_entertainment_order = df.groupby('Traveller')['Inflight_Entertainment'].mean().sort_values(ascending = False).index.values
+avg_ground_service_order = df.groupby('Traveller')['Ground_Service'].mean().sort_values(ascending = False).index.values
+avg_value_for_money_order = df.groupby('Traveller')['Value_for_Money'].mean().sort_values(ascending = False).index.values
+
+fig, ax = plt.subplots(5, 1, figsize=(16, 40))
+
+
+sns.barplot(ax = ax[0], 
+            data = df, 
+            x = 'Cabin_Staff_Service', 
+            y = 'Traveller', 
+            errorbar = None, 
+            order = avg_cabin_service_order).set(title = 'Average Cabin Staff Service Rating by Traveller', 
+                                                 xlabel = 'Average Cabin Service Rating', 
+                                                 ylabel = 'Traveller Type')
+
+sns.barplot(ax = ax[1], 
+            data = df, 
+            x = 'Foods_&_Drinks', 
+            y = 'Traveller', 
+            errorbar = None, 
+            order = avg_foods_drinks_order).set(title = 'Average Foods & Drinks Rating by Traveller', 
+                                                xlabel = 'Average Foods & Drinks Rating', 
+                                                ylabel = 'Traveller Type')
+
+sns.barplot(ax = ax[2], 
+            data = df, 
+            x = 'Inflight_Entertainment', 
+            y = 'Traveller', 
+            errorbar = None, 
+            order = avg_foods_drinks_order).set(title = 'Average Inflight_Entertainment Rating by Traveller', 
+                                                xlabel = 'Average Inflight_Entertainment Rating', 
+                                                ylabel = 'Traveller Type')
+
+sns.barplot(ax = ax[3], 
+            data = df, 
+            x = 'Ground_Service', 
+            y = 'Traveller', 
+            errorbar = None, 
+            order = avg_ground_service_order).set(title = 'Average Ground Service Rating by Traveller', 
+                                                  xlabel = 'Average Ground Service Rating', 
+                                                  ylabel = 'Traveller Type')
+
+sns.barplot(ax = ax[4], 
+            data = df, 
+            x = 'Value_for_Money', 
+            y = 'Traveller', 
+            errorbar = None, 
+            order = avg_value_for_money_order).set(title = 'Average Value for Money Rating by Traveller', 
+                                                   xlabel = 'Average Value for Money Rating', 
+                                                   ylabel = 'Traveller Type')
+
+ax[0].bar_label(ax[0].containers[0])
+ax[1].bar_label(ax[1].containers[0])
+ax[2].bar_label(ax[2].containers[0])
+ax[3].bar_label(ax[3].containers[0])
+ax[4].bar_label(ax[4].containers[0])
+
+plt.show()
+```
+![Different Flight Aspects Rated by Travellers](Flight_Aspect_Ratings.png)
+
+**In all categories (Cabin Staff Service, Foods and Drinks, Inflight Entertainment, Ground Service, and Value for Money), passengers who travel solo for leisure rate their experience the highest. Passengers who travel for business rate their experience the lowest for all categories.** It is possible that passengers who travel solo for leisure may be looking forward to their destination and are more forgiving of any negative experience during their travel. Passengers who are travelling for business have more stress about going to their destination and may be more inclined to rate their experience negatively.
+
+Customers are able to recomment their trip to others through their review. A recommendation is not only an indication of whether the customer will return for future trips but it also indicates whether they will bring others customers to British Airways. **We will determine the percentage of customers who will recommend their flight.**
+```
+# Use the .subplots() command to create a figure and subplots (all the plots that fit in a figure).
+
+fig, ax = plt.subplots(1, 1, figsize=(16, 3))
+
+# Use the .barplot() command to create a bar plot.
+# Use the .set() command to create a title and x and y axis labels.
+
+sns.countplot(data = df, 
+              y = 'Recommended').set(title = 'Number of Customers Who Recommend the Flight', 
+                                     xlabel = 'Number of Customers', 
+                                     ylabel = 'Recommended')
+
+# Use the .bar_label() command to add labels to each bar.
+
+ax.bar_label(ax.containers[0])
+
+plt.show()
+```
+Most customers do not recommend their flight with British Airways and are unlikely to make future trips with British Airways. **Approximately 65% of customers are not satisfied with their experience.**
+
+Previous analysis indicate that certain traveller types are more likely to enjoy their experience more than others (Solo Leisure customers tend to give higher ratings than Business customers). **We will determine the distribution of traveller types by visualizing the number of customers per traveller type.**
+```
+traveller_count_order = df.groupby('Traveller')['Traveller'].count().sort_values(ascending = False).index.values
+
+# Use the .subplots() command to create a figure and subplots (all the plots that fit in a figure).
+
+fig, ax = plt.subplots(1, 1, figsize=(16, 7))
+
+# Use the .barplot() command to create a bar plot.
+# Use the .set() command to create a title and x and y axis labels.
+
+sns.countplot(data = df, 
+              y = 'Traveller', 
+              order = traveller_count_order).set(title = 'Number of Customers by Travel Type', 
+                                                 xlabel = 'Number of Customers', 
+                                                 ylabel = 'Travel Type')
+
+# Use the .bar_label() command to add labels to each bar.
+
+ax.bar_label(ax.containers[0])
+
+plt.show()
+```
+![Distribution of Traveller Type](Traveller_Type_Distribution.png)
+
+Customers who are travelling solo or as a couple for leisure make up the majority. Customers who are travelling as a couple for leisure make up 33.78% of the total customers. Customers who are travelling solo for leisure make up 30.81% of the total customers. Customers who are travelling for business make up 21.40% of the total. Customers who are travelling with family for leisure make up 14.01% of the total.
+
+Customers who are travelling for leisure (solo, as a couple, or as a family) have shown greater satisfaction with their trip than customers who are travelling for business. **Customers who are travelling for business make up a significant portion of the total customer base (21.40%) and improving their experience may help improve British Airway's rating and number of recommendations from customers.**
+
+We will now analyze the average rating of trips based on time. **We will start by analyzing the average trip rating based on year.**
+```
+fig, ax = plt.subplots(1, 1, figsize=(16, 5))
+
+sns.lineplot(data = df, 
+             x = 'Year_Flown', 
+             y = 'Rating', 
+             errorbar = None).set(title = 'Average Rating per Year', 
+                               xlabel = 'Year', 
+                               ylabel = 'Average Rating')
+
+plt.show()
+```
+![Average Rating by Year](Avearge_Rating_Year.png)
+
+**The year with the highest average rating is 2014. However, year 2014 contain only 9 reviews which may cause bias in the average rating.** The average rating decreases until it reaches a low point in 2017. In the year 2017, British Airways experienced an IT failure caused by a power supply issue. This may explain the low average rating in 2017. **Reviews from years 2014, 2015, 2016, and 2019 should be analyzed to help determine what customers enjoy during their trip.**
+
+**We will now analyze the average trip rating based on month.**
+```
+fig, ax = plt.subplots(1, 1, figsize=(16, 5))
+
+sns.lineplot(data = df, 
+             x = 'Month_Flown', 
+             y = 'Rating', 
+             errorbar = None).set(title = 'Average Rating per Month', 
+                               xlabel = 'Month', 
+                               ylabel = 'Average Rating')
+
+plt.show()
+```
+![Average Rating by Month](Avearge_Rating_Month.png)
+
+***The highest average ratings tend to occur from September to January. Customers who travel from September to January may be travelling primarily for holidays.** The month of June shows the lowest average rating.
+
+#### 5b. Sentiment Analysis
+**Senitment analysis is the identification and categorization of opinion expressed in text in order to determine if the customer's view on their experience is poisitive, negative, or neutral.** Sentiment analysis can offer valuable insight on customer's satisfaction and whether they will continue with our service or recommend our service to other customers.
+
+We must first import the SentimentIntensityAnalyzer library to gain access to commands used to conduct sentiment analysis.
+```
+# Import the VADER Sentiment library.
+from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
+```
+**The SentimentIntensityAnalyzer().polarity_scores() command will analyze the text inside the polarity_scores() and will rate the negativity, neutrality, and positivity of the text.** The values go from -1 to 1, with -1 being a very negative statement and 1 being a very positive one. A value of 0 is neutral. The compound score is the overall score of the text.
+
+The first step of conducting sentiment analysis is to combine all text from the Title and Text column, and remove quotation marks.
+```
+# Sentiment analysis requires text data.
+# Two columns from the original df dataframe contains text: the Title column and the Text column.
+
+df_title = df["Title"]
+df_text = df["Text"]
+
+# The Title column has quotations.
+# Use the .ste.replace() command to remove quotations.
+
+df_title = df_title.str.replace('"', "")
+
+# Combine df_title and df_text.
+# Add a period and a space after df_title.
+
+df_review = df_title + ". " + df_text
+```
+**The next step is to create a function that will determine the sentiment level for each review.** If the compound score is less than -0.25, the review is considered negative. It the compound score is greater than 0.25, the review is considered positive. If the compound score is between -0.25 and 0.25, the review is considered neutral.
+```
+def sentiment(text):
+    analysis = SentimentIntensityAnalyzer().polarity_scores(text)['compound']
+
+    if analysis > 0.25:
+        return 'Positive'
+    elif analysis < -0.25:
+        return 'Negative'
+    else:
+        return 'Neutral'
+
+sentimental = df_review.apply(sentiment)
+sentiment_count = sentimental.value_counts()
+```
+**The last step is to create a visualization of the number of positive, neutral, and negative reviews.**
+```
+fig, ax = plt.subplots(1, 1, figsize=(10, 5))
+
+sentiment_count.plot(kind = 'bar', 
+                     color = ['green','red','grey'], 
+                     title = "Sentiment Analysis on Reviews")
+plt.xlabel('Sentiments')
+plt.xticks(rotation = 0)
+plt.ylabel('Counts')
+
+ax.bar_label(ax.containers[0])
+
+plt.show()
+```
+![Visualization of Sentiment Analysis](Sentiment_Analysis_Graph.png)
+
+**Out of the 3126 reviews in the df dataframe, 49.81% are considered positive, 43.31% are considered negative, and 6.88% are considered neutral.** Although the average rating score for all types of travellers are low (3.46 to 4.96), over half of the reviews are considered positive. Perhaps reviewers frequently mention positive aspects of their trip despite the lower rating.
+
+#### 5c. Word Cloud
