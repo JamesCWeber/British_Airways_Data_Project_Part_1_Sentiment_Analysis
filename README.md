@@ -438,7 +438,7 @@ plt.show()
 ```
 ![Traveller Type vs. Average Rating](Cleaned_Dataframe.png)
 
-The highest rating a customer can give their overall experience is 10. **The average rating for all traveller types is low.** The traveller type with the highest average rating are passengers who are travelling solo for leisure. The traveller type with the lowest average rating are passengers who are travelling for business.
+The highest rating a customer can give their overall experience is 10. **The average rating for all traveller types is low, ranging from 3.46 to 4.96 out of 10.** The traveller type with the highest average rating are passengers who are travelling solo for leisure. The traveller type with the lowest average rating are passengers who are travelling for business.
 
 One important aspect of air travel is seat comfort. **We will compare the seat comfort rating by seat type.**
 ```
@@ -626,7 +626,7 @@ from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 ```
 **The SentimentIntensityAnalyzer().polarity_scores() command will analyze the text inside the polarity_scores() and will rate the negativity, neutrality, and positivity of the text.** The values go from -1 to 1, with -1 being a very negative statement and 1 being a very positive one. A value of 0 is neutral. The compound score is the overall score of the text.
 
-The first step of conducting sentiment analysis is to combine all text from the Title and Text column, and remove quotation marks.
+The first step of conducting sentiment analysis is to combine all text from the Title and Text column, and remove quotation marks. We will create a df_review dataframe. The df_review dataframe will contain a single column which contains the title and text of every review.
 ```
 # Sentiment analysis requires text data.
 # Two columns from the original df dataframe contains text: the Title column and the Text column.
@@ -644,7 +644,7 @@ df_title = df_title.str.replace('"', "")
 
 df_review = df_title + ". " + df_text
 ```
-**The next step is to create a function that will determine the sentiment level for each review.** If the compound score is less than -0.25, the review is considered negative. It the compound score is greater than 0.25, the review is considered positive. If the compound score is between -0.25 and 0.25, the review is considered neutral.
+**The next step is to create a function that will determine the sentiment level for each review.** The function will analyze the text in every row of the df_review dataframe and determine the compound sentiment score for each review. If the compound score is less than -0.25, the review is considered negative. It the compound score is greater than 0.25, the review is considered positive. If the compound score is between -0.25 and 0.25, the review is considered neutral.
 ```
 def sentiment(text):
     analysis = SentimentIntensityAnalyzer().polarity_scores(text)['compound']
@@ -679,3 +679,71 @@ plt.show()
 **Out of the 3126 reviews in the df dataframe, 49.81% are considered positive, 43.31% are considered negative, and 6.88% are considered neutral.** Although the average rating score for all types of travellers are low (3.46 to 4.96), over half of the reviews are considered positive. Perhaps reviewers frequently mention positive aspects of their trip despite the lower rating.
 
 #### 5c. Word Cloud
+**Word clouds are visual representation of how often certain words are used. The bigger and bolder the word, the more often that word is mentioned in the text.** Word clouds may offer insight on what subjects and topics are most important to customers.
+
+We must first import the wordcloud library to gain access to commands used to create world clouds.
+```
+# Import libraries that involve wordcloud.
+
+from wordcloud import WordCloud, STOPWORDS
+```
+**Next, we will combine the titles and text from all reviews into a single data point.** We will use the df_review dataframe that we created during sentiment analysis. We will combine all text data from all 3126 rows into a single row.
+```
+# Use the .str.cat() command to concatenate string values in a dataframe.
+# df_reviews have only 1 column and all data are string.
+# df_review.str.cat() will concatenate every row in df_reviews together.
+
+reviews = df_review.str.cat(sep = " ")
+```
+**We will create a list of stop words. Stop words are words that are used frequently but do not convey much information (a, the, of and, etc.).** The wordcloud library contains a list of stop words. We will add other words to the list of stop words.
+```
+# Stopwords are words that are used frequently but do not convey much information (a, the, of, and, etc.)
+# Remove words that pertain to British Airway since most reviews will include the name of the Airline.
+
+stopwords = set(STOPWORDS)
+new_words = ["British", 
+             "Airway", 
+             "Airways", 
+             "BA", 
+             "flight", 
+             "flights", 
+             "airline", 
+             "aircraft", 
+             "fly", 
+             "plane", 
+             "London", 
+             "Heathrow", 
+             "London Heathrow", 
+             "LHR", 
+             "airport"]
+
+# Use the .union() command to combine the word in stopwords with the words in new_words.
+
+new_stopwords = stopwords.union(new_words)
+```
+We will create a word cloud using the combined text of all reviews and the list of stop words. Words that are in the list of stop words will not show up in the word cloud. The word cloud will display the top 50 words that show up in reviews.
+```
+# Create a wordcloud for the reviews overall.
+
+plt.rcParams["figure.figsize"] = (20, 20)
+
+wordcloud = WordCloud(max_font_size = 50, 
+                      min_font_size = 1, 
+                      max_words = 50, 
+                      background_color = 'white', 
+                      stopwords = new_stopwords).generate(reviews)
+
+plt.plot()
+plt.imshow(wordcloud, interpolation = "bilinear")
+plt.axis("off")
+plt.show()
+```
+
+![Word Cloud created from British Airways Reviews](Word_Cloud.png)
+
+The 10 largest words in the wordcloud includes "seat", "food", "time", "service", "one", "good", "hour", "check", "staff", and "business class". **Based on the words in the word cloud, customers seem to prioritize seat comfort, food and drink quality, crew/staff service, how their time is being spent, and baggage and check in. The term business class shows up frequently more than any other travel class.** Positive words show up frequently as well such as "good", "great", and "friendly".
+
+It is possible that certain words such as "food" may be considered positive to our sentiment analysis but reviews that contain the word food may be negative. This could explain why our sentiment analysis detects a high percentage of positive reviews but our average ratings are low and why the majority of customers do not recommend their flight.
+
+## Conclusions and Recommendations
+Based on customer reviews provided by Skytrax, the average rating based on traveller type is low, ranging from 3.46 to 4.96 out of 10. Approximately 65% of customers who have reviewed their experience would not recommend their specific flight. Customers who travel for business consistently rate their experience the lowest.
