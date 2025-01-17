@@ -746,4 +746,13 @@ The 10 largest words in the wordcloud includes "seat", "food", "time", "service"
 It is possible that certain words such as "food" may be considered positive to our sentiment analysis but reviews that contain the word food may be negative. This could explain why our sentiment analysis detects a high percentage of positive reviews but our average ratings are low and why the majority of customers do not recommend their flight.
 
 ## Conclusions and Recommendations
-Based on customer reviews provided by Skytrax, the average rating based on traveller type is low, ranging from 3.46 to 4.96 out of 10. Approximately 65% of customers who have reviewed their experience would not recommend their specific flight. Customers who travel for business consistently rate their experience the lowest.
+Based on customer reviews provided by Skytrax, the average flight rating is low, ranging from 3.46 (customers who travel for business) to 4.96 (customers who travel for leisure by themselves) out of 10. Approximately 65% of customers who have reviewed their experience would not recommend their specific flight. Customers who travel for business consistently rate different aspects of their expierience, such as cabin service, food and drinks, and ground service, the lowest out of any other customers.
+
+Sentiment analysis indicate that there are slightly more postivie reviews than negative reviews. Word cloud indicate that customers prioritize seat comfort, food and drink quality, crew/staff service, how their time is being spent, and baggage and check in. Customers in business class not only consistently rate their expierience and aspects of their experience the lowest, they make up a significant part of total reviews (21.40%). Business class is also significant enough to appears in the word cloud as one of the top 10 most used word.
+
+Recommendations:
+* Focus on improving seat comfort (especially for business class), cabin and ground service, and food and drink quality.
+* Although it is important to improve the flight experience for all customers, stronger focus should be given to the business class.
+* Years 2014, 2015, 2016 and 2019 contain reviews with the highest average rating. Analyzing the reviews and flight quality during those years and comparing them to the quality of today's reviews and flights may offer some insight on how to improve customer's flight experience.
+* It is possible that customers who are travelling for business may be more stressed than customers who are travelling for leisure. Their stress may cause them to rate their experiences lower than other customers.
+
