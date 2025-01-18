@@ -760,7 +760,8 @@ Recommendations:
 
 ## Power Point Slide
 The final part of this project is to create a single Power Point slide that summarizes our findings. This slide will be used as a part of a board meeting held by the data science team leader. A copy of the Power Point slide is included in this repository under the file name: James Weber Review Analysis Slide.pptx
-![Word Cloud created from British Airways Reviews](Word_Cloud.png)
+
+![Insight Summary Power Point Slide](Power_Point_Slide.png)
 
 The picture above depicts the Power Point slide that summarizes our findings.
 
