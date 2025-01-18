@@ -16,21 +16,23 @@ In this task, I take on the role of a junior data scientist employed at British 
 * PowerPoint
 
 ## Data Sourcing
-This data I will be using in this project is scraped from [British Airways reviews provided by Skytrax](https://www.airlinequality.com/airline-reviews/british-airways). A copy of the cleaned scraped data is included in this repository under the file name: Clean_Review_Scraping.
+This data I will be using in this project is scraped from [British Airways reviews provided by Skytrax](https://www.airlinequality.com/airline-reviews/british-airways). A copy of the cleaned scraped data is included in this repository under the file name: Cleaned_Scraping.csv.
 
 ## Data Attributes
 Data analysis is conducted on cleaned scraped data. The attributes listed below are attributes from the cleaned scaped data.
 * Rating - The overall rating the reviewer gave for their experience. The rating goes from 1 to 10.
 * Title - The title of the review.
 * Text - The main body of the review.
-* Traveller - The name of the reviewer.
-* Seat_Type - The seat type (economy, first class, etc.) the reviewer has paid for.
+* Traveller - The reason for travel (business, solo leisure, couple leisure, and family leisure).
+* Seat_Type - The seat type (economy, premium economy, busness, and first class) the reviewer has paid for.
 * Seat_Comfort - The seat comfort rating based on number of stars.
 * Cabin_Staff_Service - The cabin service rating based on number of stars.
 * Foods_&_Drinks - The foods and drinks rating based on number of stars.
+* Inflight_Entertainment - The inflight entertainment rating based on the number of stars.
 * Ground_Service - The ground service rating based on number of stars.
 * Value_for_Money - The value for the money rating based on number of stars.
 * Recommended - Whether the reviewer recommends British Airway's service.
+* Month_Flown - The month the review has flown.
 * Year_Flown - The year the reviewer has flown.
 
 ## Web Scraping, Data Analysis, and Data Visualizations
@@ -756,3 +758,26 @@ Recommendations:
 * Years 2014, 2015, 2016 and 2019 contain reviews with the highest average rating. Analyzing the reviews and flight quality during those years and comparing them to the quality of today's reviews and flights may offer some insight on how to improve customer's flight experience.
 * It is possible that customers who are travelling for business may be more stressed than customers who are travelling for leisure. Their stress may cause them to rate their experiences lower than other customers.
 
+## Power Point Slide
+The final part of this project is to create a single Power Point slide that summarizes our findings. This slide will be used as a part of a board meeting held by the data science team leader. A copy of the Power Point slide is included in this repository under the file name: James Weber Review Analysis Slide.pptx
+![Word Cloud created from British Airways Reviews](Word_Cloud.png)
+
+The picture above depicts the Power Point slide that summarizes our findings.
+
+Below is an example script on how the slide could be presented:
+
+An analysis was conducted on 3126 reviews regarding the British Airways airline, posted on Skytrax.  
+The average rating was calculated, grouped by passenger type.  
+Four passenger types were identified: Solo Leisure Passengers, Couple Leisure Passengers, Family Leisure Passengers, and Business Passengers.  
+Of the four passenger types, the Solo Leisure Passengers rated their experience the highest with an average rating of 4.96 out of 10.  
+Business passengers rated their experience the lowest with an average rating of 3.46 out of 10.  
+This pattern is repeated with other metrics which include seat comfort, staff service, foods and drinks, ground service, and value for the money.  
+Solo leisure passengers rated all categories the highest while business passengers rated all categories the lowest.  
+The sentiment analysis categorizes reviews as positive, neutral, or negative.  
+49.81% of reviews are considered positive, 43.31% are considered negative, and 6.88% are considered neutral.  
+The word cloud depicted shows the 50 most used words in the reviews with larger words being used more often.  
+The largest words in the word cloud pertain to passenger’s comfort, passenger’s time, and service provided.  
+These words include "seat", "food", “time", "service", "hour", “check", "staff“ and “business class".  
+To raise the average rating of the airline, focus should be made in improving seat comfort, cabin and ground service, and food and drink quality.  
+More focus should be placed on improving business class than other classes.  
+Business class make up 21.4% of total reviews, and customers in business class consistently rate their experience the lowest.
