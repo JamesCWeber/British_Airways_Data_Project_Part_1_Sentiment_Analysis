@@ -12,7 +12,10 @@ In this task, I take on the role of a junior data scientist employed at British 
 * Jupyter Notebook
 * Python
 * Exploratory Data Analysis
+* Data Cleaning
 * Data Visualization
+* Sentiment Analysis
+* Word Cloud
 * PowerPoint
 
 ## Data Sourcing
