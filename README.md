@@ -13,9 +13,10 @@ In this task, I take on the role of a junior data scientist employed at British 
 * Python
 * Exploratory Data Analysis
 * Data Cleaning
-* Data Visualization
+* Data Visualization (Bar Chart, Word Cloud)
+* Web Scraping
 * Sentiment Analysis
-* Word Cloud
+* Word Cloud Generation
 * PowerPoint
 
 ## Data Sourcing
