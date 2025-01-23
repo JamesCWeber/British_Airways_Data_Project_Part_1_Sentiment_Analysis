@@ -13,7 +13,7 @@ In this task, I take on the role of a junior data scientist employed at British 
 * Python
 * Exploratory Data Analysis
 * Data Cleaning
-* Data Visualization (Bar Chart, Word Cloud)
+* Data Visualization (Bar Chart, Line Chart, Word Cloud)
 * Web Scraping
 * Sentiment Analysis
 * Word Cloud Generation
